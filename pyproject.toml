@@ -7,7 +7,8 @@ requires-python = ">=3.8"
 license = {file = "LICENSE.md"}
 dependencies = [
   "bardapi",
-  "python-dotenv"
+  "python-dotenv",
+  "cryptography"
 ]
 [build-system]
 requires = ["setuptools>=43.0.0", "wheel"]

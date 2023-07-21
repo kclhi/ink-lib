@@ -1,3 +1,5 @@
 black
 python-dotenv
 bardapi
+cryptography
+types-cryptography

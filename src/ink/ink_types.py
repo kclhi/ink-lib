@@ -21,6 +21,11 @@ class BardResponse:
     code: str | None
 
 
+@dataclass
+class InkMessages:
+    messages: list[str]
+
+
 class Chatbot(Protocol):
     def sendMessage(self, message: str) -> str:
         ''''''
