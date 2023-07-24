@@ -19,6 +19,7 @@ class BardResponse:
     links: list[str]
     images: set[str]
     code: str | None
+    langCode: str
 
 
 @dataclass
