@@ -1,10 +1,10 @@
 import logging, os, base64
+from typing import cast
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.serialization import (
-    load_pem_private_key,
-    load_pem_public_key,
-)
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.x509 import load_pem_x509_certificate
+from cryptography.hazmat.backends.openssl.rsa import RSAPublicKey
 
 from ink.bard import Bard
 from ink.ink_types import Chatbot, InkMessages
@@ -31,10 +31,13 @@ class Ink:
         return encodedSignedMessage
 
     def verifySignature(self, signedMessages: str, messages: InkMessages) -> bool:
-        with open(os.environ['publicKeyPath'], 'rb') as pemFile:
-            publicKey: bytes = pemFile.read()
+        with open(os.environ['certificatePath'], 'rb') as pemFile:
+            certificate: bytes = pemFile.read()
+        publicKey: RSAPublicKey = cast(
+            RSAPublicKey, load_pem_x509_certificate(certificate).public_key()
+        )
         try:
-            load_pem_public_key(publicKey).verify(
+            publicKey.verify(
                 base64.b64decode(signedMessages.encode('utf-8')),
                 ''.join(messages.messages).encode('utf-8'),
                 padding.PKCS1v15(),
