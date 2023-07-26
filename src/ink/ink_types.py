@@ -23,8 +23,9 @@ class BardResponse:
 
 
 @dataclass
-class InkMessages:
-    messages: list[str]
+class InkMessage:
+    sender: str
+    text: str
 
 
 class Chatbot(Protocol):
