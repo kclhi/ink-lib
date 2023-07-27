@@ -8,7 +8,8 @@ license = {file = "LICENSE.md"}
 dependencies = [
   "bardapi",
   "python-dotenv",
-  "cryptography"
+  "cryptography",
+  "rfc3161ng"
 ]
 [build-system]
 requires = ["setuptools>=43.0.0", "wheel"]

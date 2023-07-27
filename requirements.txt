@@ -3,3 +3,4 @@ python-dotenv
 bardapi
 cryptography
 types-cryptography
+rfc3161ng
