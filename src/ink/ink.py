@@ -8,17 +8,17 @@ from cryptography.x509 import load_pem_x509_certificate
 from cryptography.hazmat.backends.openssl.rsa import RSAPublicKey
 from rfc3161ng import RemoteTimestamper, get_timestamp  # type: ignore
 
-from ink.bard import Bard
-from ink.ink_types import Chatbot, InkMessage
+from ink.ink_types import Chatbot, ChatbotResponse, InkMessage
 
 
 class Ink:
-    def __init__(self) -> None:
+    def __init__(self, chatbot: Chatbot) -> None:
         self.__logger: logging.Logger = logging.getLogger()
+        self.__chatbot: Chatbot = chatbot
 
-    def sendMessage(self, message: str) -> str:
-        bard: Chatbot = Bard()
-        return bard.sendMessage(message)
+    def sendMessage(self, message: str) -> InkMessage:
+        response: ChatbotResponse = self.__chatbot.sendMessage(message)
+        return InkMessage(sender='chatbot', text=response.content)
 
     def signMessages(self, messages: list[InkMessage]) -> str:
         self.__logger.debug(messages)

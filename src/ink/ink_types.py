@@ -9,7 +9,12 @@ class BardChoice:
 
 
 @dataclass
-class BardResponse:
+class ChatbotResponse:
+    content: str
+
+
+@dataclass
+class BardResponse(ChatbotResponse):
     content: str
     conversation_id: str
     response_id: str
@@ -29,5 +34,5 @@ class InkMessage:
 
 
 class Chatbot(Protocol):
-    def sendMessage(self, message: str) -> str:
+    def sendMessage(self, message: str) -> ChatbotResponse:
         ''''''

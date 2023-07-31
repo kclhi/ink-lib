@@ -4,3 +4,5 @@ bardapi
 cryptography
 types-cryptography
 rfc3161ng
+requests
+types-requests
