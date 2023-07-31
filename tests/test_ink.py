@@ -1,10 +1,8 @@
-import base64, os, requests, random
-import time
+import base64, random, time, requests, os
 from zoneinfo import ZoneInfo
 import pytest  # type: ignore
 from datetime import datetime
 from dotenv import load_dotenv
-import bardapi.constants  # type: ignore
 
 from ink.ink import Ink
 from ink.bard import Bard
@@ -67,9 +65,9 @@ def test_messageContextA(wait: None) -> None:
 
 
 def test_messageContextB(wait: None) -> None:
-    session: requests.Session = requests.Session()
-    session.headers = bardapi.constants.SESSION_HEADERS
-    session.cookies.set(os.environ['tokenIdentifier'], os.environ['token'])  # type: ignore
+    session: requests.Session = Bard.createSession(
+        os.environ['tokenIdentifier'], os.environ['token']
+    )
     inkB: Ink = Ink(Bard(session=session))
     word: str = getWord()
     responseC: InkMessage = inkB.sendMessage('remember the word ' + word)

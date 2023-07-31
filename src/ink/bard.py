@@ -1,6 +1,7 @@
 import os, logging, requests
 from bardapi import Bard as BardAPI  # type: ignore
-import requests
+import bardapi.constants  # type: ignore
+
 from ink.ink_types import BardResponse
 
 
@@ -19,3 +20,10 @@ class Bard:
         response: BardResponse = BardResponse(**self.__bard.get_answer(message))
         self.__logger.debug(response.content)
         return response
+
+    @staticmethod
+    def createSession(tokenIdentifier: str, token: str) -> requests.Session:
+        session: requests.Session = requests.Session()
+        session.headers = bardapi.constants.SESSION_HEADERS
+        session.cookies.set(tokenIdentifier, token)  # type: ignore
+        return session
