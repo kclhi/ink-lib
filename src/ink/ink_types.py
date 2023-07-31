@@ -11,6 +11,7 @@ class BardChoice:
 @dataclass
 class ChatbotResponse:
     content: str
+    conversation_id: str
 
 
 @dataclass
@@ -31,6 +32,7 @@ class BardResponse(ChatbotResponse):
 class InkMessage:
     sender: str
     text: str
+    conversationId: str | None = None
 
 
 class Chatbot(Protocol):

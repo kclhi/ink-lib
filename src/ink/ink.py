@@ -18,7 +18,11 @@ class Ink:
 
     def sendMessage(self, message: str) -> InkMessage:
         response: ChatbotResponse = self.__chatbot.sendMessage(message)
-        return InkMessage(sender='chatbot', text=response.content)
+        return InkMessage(
+            sender='chatbot',
+            text=response.content,
+            conversationId=response.conversation_id,
+        )
 
     def signMessages(self, messages: list[InkMessage]) -> str:
         self.__logger.debug(messages)
@@ -57,7 +61,7 @@ class Ink:
             RemoteTimestamper(
                 'https://freetsa.org/tsr',
                 certificate=open(os.environ['tsaCertificatePath'], 'rb').read(),
-                hashname='sha512',
+                hashname='sha256',
             ).timestamp(data=base64.b64decode(signedMessages.encode('utf-8')))
         ).decode('utf-8')
         self.__logger.debug(timestamp)
@@ -68,7 +72,7 @@ class Ink:
             RemoteTimestamper(
                 'https://freetsa.org/tsr',
                 certificate=open(os.environ['tsaCertificatePath'], 'rb').read(),
-                hashname='sha512',
+                hashname='sha256',
             ).check(
                 base64.b64decode(timestamp.encode('utf-8')),
                 data=base64.b64decode(signedMessages.encode('utf-8')),

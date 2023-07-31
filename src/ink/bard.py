@@ -5,9 +5,15 @@ from ink.ink_types import BardResponse
 
 
 class Bard:
-    def __init__(self, session: requests.Session | None = None) -> None:
+    def __init__(
+        self, conversationId: str | None = None, session: requests.Session | None = None
+    ) -> None:
         self.__logger: logging.Logger = logging.getLogger()
-        self.__bard: BardAPI = BardAPI(token=os.environ['token'], session=session)
+        self.__logger.debug('conversation id: ' + str(conversationId))
+        self.__logger.debug('existing session: ' + str(session != None))
+        self.__bard: BardAPI = BardAPI(
+            token=os.environ['token'], conversation_id=conversationId, session=session
+        )
 
     def sendMessage(self, message: str) -> BardResponse:
         response: BardResponse = BardResponse(**self.__bard.get_answer(message))

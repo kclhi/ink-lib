@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 import pytest  # type: ignore
 from datetime import datetime
 from dotenv import load_dotenv
+import bardapi.constants  # type: ignore
 
 from ink.ink import Ink
 from ink.bard import Bard
@@ -66,15 +67,8 @@ def test_messageContextA(wait: None) -> None:
 
 
 def test_messageContextB(wait: None) -> None:
-    session = requests.Session()
-    session.headers = {
-        "Host": "bard.google.com",
-        "X-Same-Domain": "1",
-        "User-Agent": os.environ['userAgent'],
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        "Origin": "https://bard.google.com",
-        "Referer": "https://bard.google.com/",
-    }
+    session: requests.Session = requests.Session()
+    session.headers = bardapi.constants.SESSION_HEADERS
     session.cookies.set(os.environ['tokenIdentifier'], os.environ['token'])  # type: ignore
     inkB: Ink = Ink(Bard(session=session))
     word: str = getWord()
@@ -85,7 +79,7 @@ def test_messageContextB(wait: None) -> None:
         and 'I will remember' in responseC.text.split('.')[0]
     )
     time.sleep(10)
-    inkC: Ink = Ink(Bard(session=session))
+    inkC: Ink = Ink(Bard(conversationId=responseC.conversationId, session=session))
     responseD: InkMessage = inkC.sendMessage('what was the word')
     assert (
         type(responseD.text) == str
