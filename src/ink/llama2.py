@@ -6,9 +6,11 @@ from ink.ink_types import ChatbotResponse
 
 
 class Llama2:
-    def __init__(self, chat: list[Any] | None = None) -> None:
+    def __init__(
+        self, apiURL: str = 'http://127.0.0.1:8080', chat: list[Any] | None = None
+    ) -> None:
         self.__logger: logging.Logger = logging.getLogger()
-        self.__llama2: Llama2API = Llama2API(chat)
+        self.__llama2: Llama2API = Llama2API(apiURL, chat)
 
     def sendMessage(self, message: str) -> ChatbotResponse:
         self.__llama2.chatCompletion(message)

@@ -41,13 +41,23 @@ def wait() -> None:
 
 
 def test_sendMessage(wait: None) -> None:
-    ink: Ink = Ink(Llama2())
+    ink: Ink = Ink(
+        Llama2(),
+        os.environ['privateKeyPath'],
+        os.environ['certificatePath'],
+        os.environ['tsaCertificatePath'],
+    )
     response: InkMessage = ink.sendMessage('hello world')
     assert type(response.text) == str and len(response.text) > 0
 
 
 def test_messageContextA(wait: None) -> None:
-    inkA: Ink = Ink(Llama2())
+    inkA: Ink = Ink(
+        Llama2(),
+        os.environ['privateKeyPath'],
+        os.environ['certificatePath'],
+        os.environ['tsaCertificatePath'],
+    )
     word: str = getWord()
     responseA: InkMessage = inkA.sendMessage('remember the following word: ' + word)
     assert (
@@ -68,7 +78,12 @@ def test_messageContextA(wait: None) -> None:
 
 def test_messageContextB(wait: None) -> None:
     chatbot: Llama2 = Llama2()
-    inkB: Ink = Ink(chatbot)
+    inkB: Ink = Ink(
+        chatbot,
+        os.environ['privateKeyPath'],
+        os.environ['certificatePath'],
+        os.environ['tsaCertificatePath'],
+    )
     word: str = getWord()
     responseC: InkMessage = inkB.sendMessage('remember the following word: ' + word)
     assert (
@@ -77,7 +92,12 @@ def test_messageContextB(wait: None) -> None:
         and 'ok' in responseC.text.lower()
     )
     time.sleep(10)
-    inkC: Ink = Ink(Llama2(chatbot.getChat()))
+    inkC: Ink = Ink(
+        Llama2(chat=chatbot.getChat()),
+        os.environ['privateKeyPath'],
+        os.environ['certificatePath'],
+        os.environ['tsaCertificatePath'],
+    )
     responseD: InkMessage = inkC.sendMessage(
         'what was the word I asked you to remember?'
     )
@@ -89,7 +109,12 @@ def test_messageContextB(wait: None) -> None:
 
 
 def test_signMessage() -> None:
-    ink: Ink = Ink(Llama2())
+    ink: Ink = Ink(
+        Llama2(),
+        os.environ['privateKeyPath'],
+        os.environ['certificatePath'],
+        os.environ['tsaCertificatePath'],
+    )
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )
@@ -97,7 +122,12 @@ def test_signMessage() -> None:
 
 
 def test_verifySignature() -> None:
-    ink: Ink = Ink(Llama2())
+    ink: Ink = Ink(
+        Llama2(),
+        os.environ['privateKeyPath'],
+        os.environ['certificatePath'],
+        os.environ['tsaCertificatePath'],
+    )
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )
@@ -112,7 +142,12 @@ def test_verifySignature() -> None:
 
 
 def test_getTimestamp() -> None:
-    ink: Ink = Ink(Llama2())
+    ink: Ink = Ink(
+        Llama2(),
+        os.environ['privateKeyPath'],
+        os.environ['certificatePath'],
+        os.environ['tsaCertificatePath'],
+    )
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )
@@ -121,7 +156,12 @@ def test_getTimestamp() -> None:
 
 
 def test_verifyTimestamp() -> None:
-    ink: Ink = Ink(Llama2())
+    ink: Ink = Ink(
+        Llama2(),
+        os.environ['privateKeyPath'],
+        os.environ['certificatePath'],
+        os.environ['tsaCertificatePath'],
+    )
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )
@@ -135,7 +175,12 @@ def test_verifyTimestamp() -> None:
 
 
 def test_extractTime() -> None:
-    ink: Ink = Ink(Llama2())
+    ink: Ink = Ink(
+        Llama2(),
+        os.environ['privateKeyPath'],
+        os.environ['certificatePath'],
+        os.environ['tsaCertificatePath'],
+    )
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )

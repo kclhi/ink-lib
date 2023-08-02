@@ -7,13 +7,16 @@ from ink.ink_types import BardResponse
 
 class Bard:
     def __init__(
-        self, conversationId: str | None = None, session: requests.Session | None = None
+        self,
+        token: str,
+        conversationId: str | None = None,
+        session: requests.Session | None = None,
     ) -> None:
         self.__logger: logging.Logger = logging.getLogger()
         self.__logger.debug('conversation id: ' + str(conversationId))
         self.__logger.debug('existing session: ' + str(session != None))
         self.__bard: BardAPI = BardAPI(
-            token=os.environ['token'], conversation_id=conversationId, session=session
+            token=token, conversation_id=conversationId, session=session
         )
 
     def sendMessage(self, message: str) -> BardResponse:

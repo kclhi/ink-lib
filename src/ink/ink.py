@@ -1,5 +1,5 @@
 from datetime import datetime
-import logging, os, base64, json
+import logging, base64, json
 from typing import cast
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -12,9 +12,18 @@ from ink.ink_types import Chatbot, ChatbotResponse, InkMessage
 
 
 class Ink:
-    def __init__(self, chatbot: Chatbot) -> None:
+    def __init__(
+        self,
+        chatbot: Chatbot,
+        privateKeyPath: str,
+        certificatePath: str,
+        tsaCertificatePath: str,
+    ) -> None:
         self.__logger: logging.Logger = logging.getLogger()
         self.__chatbot: Chatbot = chatbot
+        self.__privateKeyPath = privateKeyPath
+        self.__certificatePath = certificatePath
+        self.__tsaCertificatePath = tsaCertificatePath
 
     def sendMessage(self, message: str) -> InkMessage:
         response: ChatbotResponse = self.__chatbot.sendMessage(message)
@@ -26,7 +35,7 @@ class Ink:
 
     def signMessages(self, messages: list[InkMessage]) -> str:
         self.__logger.debug(messages)
-        with open(os.environ['privateKeyPath'], 'rb') as pemFile:
+        with open(self.__privateKeyPath, 'rb') as pemFile:
             privateKey: bytes = pemFile.read()
         signedMessage: bytes = load_pem_private_key(privateKey, password=None).sign(
             json.dumps(messages, default=lambda o: o.__dict__).encode('utf-8'),
@@ -40,7 +49,7 @@ class Ink:
     def verifySignature(self, signedMessages: str, messages: list[InkMessage]) -> bool:
         self.__logger.debug(signedMessages)
         self.__logger.debug(messages)
-        with open(os.environ['certificatePath'], 'rb') as pemFile:
+        with open(self.__certificatePath, 'rb') as pemFile:
             certificate: bytes = pemFile.read()
         publicKey: RSAPublicKey = cast(
             RSAPublicKey, load_pem_x509_certificate(certificate).public_key()
@@ -60,7 +69,7 @@ class Ink:
         timestamp: str = base64.b64encode(
             RemoteTimestamper(
                 'https://freetsa.org/tsr',
-                certificate=open(os.environ['tsaCertificatePath'], 'rb').read(),
+                certificate=open(self.__tsaCertificatePath, 'rb').read(),
                 hashname='sha256',
             ).timestamp(data=base64.b64decode(signedMessages.encode('utf-8')))
         ).decode('utf-8')
@@ -71,7 +80,7 @@ class Ink:
         try:
             RemoteTimestamper(
                 'https://freetsa.org/tsr',
-                certificate=open(os.environ['tsaCertificatePath'], 'rb').read(),
+                certificate=open(self.__tsaCertificatePath, 'rb').read(),
                 hashname='sha256',
             ).check(
                 base64.b64decode(timestamp.encode('utf-8')),
