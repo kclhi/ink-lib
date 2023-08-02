@@ -5,7 +5,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 from ink.ink import Ink
-from ink.bard import Bard
+from ink.llama2 import Llama2
 from ink.ink_types import InkMessage
 
 
@@ -41,22 +41,24 @@ def wait() -> None:
 
 
 def test_sendMessage(wait: None) -> None:
-    ink: Ink = Ink(Bard())
+    ink: Ink = Ink(Llama2())
     response: InkMessage = ink.sendMessage('hello world')
     assert type(response.text) == str and len(response.text) > 0
 
 
 def test_messageContextA(wait: None) -> None:
-    inkA: Ink = Ink(Bard())
+    inkA: Ink = Ink(Llama2())
     word: str = getWord()
-    responseA: InkMessage = inkA.sendMessage('remember the word ' + word)
+    responseA: InkMessage = inkA.sendMessage('remember the following word: ' + word)
     assert (
         type(responseA.text) == str
         and len(responseA.text) > 0
-        and 'I will remember' in responseA.text.split('.')[0]
+        and 'ok' in responseA.text.lower()
     )
     time.sleep(10)
-    responseB: InkMessage = inkA.sendMessage('what was the word')
+    responseB: InkMessage = inkA.sendMessage(
+        'what was the word I asked you to remember?'
+    )
     assert (
         type(responseB.text) == str
         and len(responseB.text) > 0
@@ -65,20 +67,20 @@ def test_messageContextA(wait: None) -> None:
 
 
 def test_messageContextB(wait: None) -> None:
-    session: requests.Session = Bard.createSession(
-        os.environ['tokenIdentifier'], os.environ['token']
-    )
-    inkB: Ink = Ink(Bard(session=session))
+    chatbot: Llama2 = Llama2()
+    inkB: Ink = Ink(chatbot)
     word: str = getWord()
-    responseC: InkMessage = inkB.sendMessage('remember the word ' + word)
+    responseC: InkMessage = inkB.sendMessage('remember the following word: ' + word)
     assert (
         type(responseC.text) == str
         and len(responseC.text) > 0
-        and 'I will remember' in responseC.text.split('.')[0]
+        and 'ok' in responseC.text.lower()
     )
     time.sleep(10)
-    inkC: Ink = Ink(Bard(conversationId=responseC.conversationId, session=session))
-    responseD: InkMessage = inkC.sendMessage('what was the word')
+    inkC: Ink = Ink(Llama2(chatbot.getChat()))
+    responseD: InkMessage = inkC.sendMessage(
+        'what was the word I asked you to remember?'
+    )
     assert (
         type(responseD.text) == str
         and len(responseD.text) > 0
@@ -87,7 +89,7 @@ def test_messageContextB(wait: None) -> None:
 
 
 def test_signMessage() -> None:
-    ink: Ink = Ink(Bard())
+    ink: Ink = Ink(Llama2())
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )
@@ -95,7 +97,7 @@ def test_signMessage() -> None:
 
 
 def test_verifySignature() -> None:
-    ink: Ink = Ink(Bard())
+    ink: Ink = Ink(Llama2())
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )
@@ -110,7 +112,7 @@ def test_verifySignature() -> None:
 
 
 def test_getTimestamp() -> None:
-    ink: Ink = Ink(Bard())
+    ink: Ink = Ink(Llama2())
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )
@@ -119,7 +121,7 @@ def test_getTimestamp() -> None:
 
 
 def test_verifyTimestamp() -> None:
-    ink: Ink = Ink(Bard())
+    ink: Ink = Ink(Llama2())
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )
@@ -133,7 +135,7 @@ def test_verifyTimestamp() -> None:
 
 
 def test_extractTime() -> None:
-    ink: Ink = Ink(Bard())
+    ink: Ink = Ink(Llama2())
     signedMessages: str = ink.signMessages(
         [InkMessage(sender='bob', text='hello world')]
     )
