@@ -1,6 +1,7 @@
 black
 python-dotenv
 bardapi
+openai
 cryptography
 types-cryptography
 rfc3161ng
