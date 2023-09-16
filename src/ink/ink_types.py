@@ -12,16 +12,16 @@ class BardChoice:
 @dataclass
 class ChatbotResponse:
     def __init__(self, content: str, conversation_id: str):
-        self.content = content
+        self.__content = content
         self.conversation_id = conversation_id
 
     @property
     def content(self) -> str:
-        return self.content
+        return self.__content
 
     @content.setter
     def content(self, value: str) -> None:
-        self.content = value
+        self.__content = value
 
 
 @dataclass
